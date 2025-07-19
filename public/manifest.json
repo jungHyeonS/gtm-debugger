@@ -1,0 +1,9 @@
+{
+  "manifest_version": 3,
+  "name": "gtm-debugger",
+  "version": "0.0.1",
+  "description": "A minimal Pomodoro timer to help you stay focused.",
+  "action": {
+    "default_popup": "index.html"
+  }
+}
