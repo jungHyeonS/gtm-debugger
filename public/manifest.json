@@ -1,8 +1,26 @@
 {
   "manifest_version": 3,
-  "name": "gtm-debugger",
-  "version": "0.0.1",
-  "description": "A minimal Pomodoro timer to help you stay focused.",
+  "name": "GTM Debugger",
+  "version": "0.0.24",
+  "permissions": ["scripting", "activeTab"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["inject.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "action": {
     "default_popup": "index.html"
   }
