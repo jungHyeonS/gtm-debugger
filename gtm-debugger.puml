@@ -1,0 +1,15 @@
+@startuml
+actor Browser
+participant "Content Script" as Content
+participant "Inject JS" as Inject
+participant "Background" as Bg
+participant "Popup" as Popup
+participant "UI" as UI
+
+Browser -> Content : 브라우저 로드\nContent Script 실행
+Content -> Inject : Inject JS 삽입
+Inject -> Inject : window.dataLayer 관찰
+Inject -> Bg : dataLayer 변경 이벤트 전송
+Bg -> Popup : 이벤트 전달
+Popup -> UI : 이벤트를 UI로 그림
+@enduml
