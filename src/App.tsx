@@ -1,38 +1,38 @@
-import { useEffect, useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [events, setEvents] = useState<any[]>([]);
 
   useEffect(() => {
-    console.log('App component mounted');
-    console.log('window dataLayer:', (window as any).dataLayer);
+    // 팝업이 열릴 때마다 전체 이벤트를 가져옴
+    chrome.runtime.sendMessage({ type: "GET_DATA_LAYER_EVENTS" }, (res) => {
+      if (res?.events) setEvents(res.events);
+    });
+
+    // 실시간 메시지 수신 (옵션)
+    const handler = (msg: any) => {
+      if (msg.type === "DATA_LAYER_EVENT") {
+        setEvents((prev) => [...prev, msg.payload]);
+      }
+    };
+    chrome.runtime.onMessage.addListener(handler);
+    return () => chrome.runtime.onMessage.removeListener(handler);
   }, []);
   return (
     <>
-      <div>
-        <a href='https://vite.dev' target='_blank'>
-          <img src={viteLogo} className='logo' alt='Vite logo' />
-        </a>
-        <a href='https://react.dev' target='_blank'>
-          <img src={reactLogo} className='logo react' alt='React logo' />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className='card'>
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className='read-the-docs'>
-        Click on the Vite and React logos to learn more
-      </p>
-      {JSON.stringify((window as any).dataLayer, null, 2)}
+      {events ? (
+        <div className="card">
+          <h1>GTM Debugger</h1>
+          <p>Received dataLayer event:</p>
+          <pre>{JSON.stringify(events)}</pre>
+        </div>
+      ) : (
+        <div className="card">
+          <h1>GTM Debugger</h1>
+          <p>No dataLayer events received yet.</p>
+        </div>
+      )}
     </>
   );
 }

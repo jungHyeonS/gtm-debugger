@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "GTM Debugger",
-  "version": "0.0.30",
-  "permissions": ["scripting", "activeTab"],
+  "version": "0.0.38",
+  "permissions": ["scripting", "activeTab", "storage", "tabs"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"
