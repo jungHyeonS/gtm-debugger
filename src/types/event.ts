@@ -13,3 +13,6 @@ export interface GtagCommand {
   [key: number]: any;
 }
 export type DataLayerEvent = GtmEvent | GtagCommand;
+
+// 페이지별 그룹핑: pageKey(string) → DataLayerEvent[][] (이중배열)
+export type GroupedEvents = { [pageKey: string]: DataLayerEvent[][] };

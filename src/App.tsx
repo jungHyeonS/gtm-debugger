@@ -1,33 +1,74 @@
 import { useEffect, useState } from "react";
+import type { GroupedEvents } from "./types/event";
 import EventList from "./components/EventList";
-import type { DataLayerEvent } from "./types/event";
 
 export default function App() {
-  const [events, setEvents] = useState<DataLayerEvent[]>([]);
+  // const [events, setEvents] = useState<DataLayerEvent[]>([]);
+
+  const [grouped, setGrouped] = useState<GroupedEvents>({});
 
   useEffect(() => {
-    chrome.runtime.sendMessage({ type: "GET_DATA_LAYER_EVENTS" }, (res) => {
-      if (res?.events) {
-        setEvents(res.events.flat ? res.events.flat() : res.events);
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs.length > 0) {
+        const tab = tabs[0];
+        chrome.runtime.sendMessage(
+          {
+            type: "ALL_DATA_LAYER_EVENTS",
+            tabId: tab.id,
+            url: tab.url,
+          },
+          (res) => {
+            if (res?.grouped) {
+              setGrouped(res.grouped);
+              // setEvents(res.events.flat ? res.events.flat() : res.events);
+            }
+          }
+        );
       }
     });
 
-    const handler = (msg: any) => {
-      if (msg.type === "DATA_LAYER_EVENT") {
-        setEvents((prev) => [...prev, msg.payload]);
-      }
-    };
-    chrome.runtime.onMessage.addListener(handler);
-    return () => chrome.runtime.onMessage.removeListener(handler);
+    // const handler = (msg: any) => {
+    //   if (msg.type === "DATA_LAYER_EVENT") {
+    //     setEvents((prev) => [...prev, msg.payload]);
+    //   }
+    // };
+
+    // chrome.runtime.onMessage.addListener(handler);
+    // return () => chrome.runtime.onMessage.removeListener(handler);
   }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 max-w-[500px] w-full p-4">
       <div className="w-full mx-auto">
-        <h1 className="text-xl font-bold text-blue-600 mb-4 tracking-tight">
-          GTM Debugger
-        </h1>
-        <EventList events={events} />
+        <div className="w-full flex flex-row items-center justify-between">
+          <h1 className="text-xl font-bold text-blue-600 mb-4 tracking-tight">
+            GTM Debugger
+          </h1>
+
+          {/* reset btn */}
+          <button
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
+            onClick={() => {
+              chrome.runtime.sendMessage(
+                {
+                  type: "RESET_DATA_LAYER_EVENTS",
+                },
+                (res) => {
+                  if (res?.success) {
+                    setGrouped({});
+                    console.log("All data layer events reset.");
+                  } else {
+                    console.error("Failed to reset data layer events.");
+                  }
+                }
+              );
+            }}
+          >
+            Reset
+          </button>
+        </div>
+
+        <EventList grouped={grouped} />
       </div>
     </div>
   );
