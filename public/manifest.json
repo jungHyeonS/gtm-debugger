@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "GTM Debugger",
-  "version": "0.0.24",
+  "version": "0.0.30",
   "permissions": ["scripting", "activeTab"],
   "host_permissions": ["<all_urls>"],
   "background": {
@@ -12,7 +12,7 @@
       "matches": ["<all_urls>"],
       "js": ["content.js"],
       "run_at": "document_idle",
-      "all_frames": true
+      "all_frames": false
     }
   ],
   "web_accessible_resources": [
