@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import type { GroupedEvents } from "./types/event";
-import EventList from "./components/EventList";
+import { useEffect, useState } from 'react';
+import type { GroupedEvents } from './types/event';
+import EventList from './components/EventList';
 
 export default function App() {
   // const [events, setEvents] = useState<DataLayerEvent[]>([]);
@@ -13,7 +13,7 @@ export default function App() {
         const tab = tabs[0];
         chrome.runtime.sendMessage(
           {
-            type: "ALL_DATA_LAYER_EVENTS",
+            type: 'ALL_DATA_LAYER_EVENTS',
             tabId: tab.id,
             url: tab.url,
           },
@@ -38,27 +38,29 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 max-w-[500px] w-full p-4">
-      <div className="w-full mx-auto">
-        <div className="w-full flex flex-row items-center justify-between">
-          <h1 className="text-xl font-bold text-blue-600 mb-4 tracking-tight">
+    <div className='min-h-screen bg-gray-50 max-w-[500px] w-full p-4'>
+      <div className='w-full mx-auto'>
+        <div className='w-full flex flex-row items-center justify-between'>
+          <h1 className='text-xl font-bold text-blue-600 mb-4 tracking-tight'>
             GTM Debugger
           </h1>
 
           {/* reset btn */}
           <button
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
+            className='bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors'
             onClick={() => {
               chrome.runtime.sendMessage(
                 {
-                  type: "RESET_DATA_LAYER_EVENTS",
+                  type: 'RESET_DATA_LAYER_EVENTS',
+                  tabId: chrome.tabs.TAB_ID_NONE, // 모든 탭에 대해 리셋
+                  url: '*',
                 },
                 (res) => {
                   if (res?.success) {
                     setGrouped({});
-                    console.log("All data layer events reset.");
+                    console.log('All data layer events reset.');
                   } else {
-                    console.error("Failed to reset data layer events.");
+                    console.error('Failed to reset data layer events.');
                   }
                 }
               );
