@@ -78,5 +78,8 @@ gtm-debugger/
 - 원클릭 리셋 기능
 - 반응형 디자인
 
+## 아키텍처
+<img width="676" height="385" alt="gtm-debugger" src="https://github.com/user-attachments/assets/773d0285-6f36-4e79-82e0-8ef1fa4adb6e" />
+
 
 
