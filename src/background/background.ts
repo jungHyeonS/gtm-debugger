@@ -10,7 +10,6 @@ function getStoragKey(tabId: number, url: string): string {
 
 const injectedTabs = new Set<number>();
 
-
 const eventsData = new Map<string, any[]>();
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -32,7 +31,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const key = getStoragKey(tabId, url);
 
   if (message.type === 'DATA_LAYER_EVENT') {
-
+    console.log('Received dataLayer event:', message.payload);
     if (eventsData.has(key)) {
       eventsData.set(key, [...(eventsData.get(key) ?? []), ...message.payload]);
     } else {
@@ -40,7 +39,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     chrome.storage.local.set({ [key]: eventsData.get(key) });
-
   }
 
   if (message.type === 'ALL_DATA_LAYER_EVENTS') {
@@ -70,9 +68,12 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   try {
-    if (changeInfo.status === 'loading' && tab.url) {
+    if (changeInfo.status === 'loading' && !changeInfo.url && tab.url) {
       const key = getStoragKey(tabId, tab.url);
-      chrome.storage.local.set({ [key]: [] });
+      chrome.storage.local.set({
+        [key]: [],
+      });
+      eventsData.set(key, []);
     }
   } catch (e) {
     console.log('Error in onUpdated listener:', e);
