@@ -1,5 +1,3 @@
-import type { DataLayerEvent } from '../types/event';
-
 function getStoragKey(tabId: number, url: string): string {
   try {
     const u = new URL(url);
@@ -11,6 +9,9 @@ function getStoragKey(tabId: number, url: string): string {
 }
 
 const injectedTabs = new Set<number>();
+
+
+const eventsData = new Map<string, any[]>();
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'RESET_DATA_LAYER_EVENTS') {
@@ -31,17 +32,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const key = getStoragKey(tabId, url);
 
   if (message.type === 'DATA_LAYER_EVENT') {
-    console.log('Data Layer event received:', message.payload);
 
-    // [key]:[] 무조건 빈 배열이다 이건 문제다
+    if (eventsData.has(key)) {
+      eventsData.set(key, [...(eventsData.get(key) ?? []), ...message.payload]);
+    } else {
+      eventsData.set(key, message.payload);
+    }
 
-    chrome.storage.local.get([key], (res) => {
-      const prev = Array.isArray(res[key]) ? res[key] : [];
+    chrome.storage.local.set({ [key]: eventsData.get(key) });
 
-      console.log('res[key]', res[key]);
-      const newEvents = prev.concat(message.payload);
-      chrome.storage.local.set({ [key]: newEvents });
-    });
   }
 
   if (message.type === 'ALL_DATA_LAYER_EVENTS') {
@@ -51,7 +50,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         .reduce((acc, key) => {
           acc[key.replace(/^events_/, '')] = all[key];
           return acc;
-        }, {} as { [pageKey: string]: DataLayerEvent[] });
+        }, {} as { [pageKey: string]: any[] });
       sendResponse({ grouped });
     });
     return true;

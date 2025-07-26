@@ -4,13 +4,16 @@
   "version": "0.0.70",
   "permissions": ["scripting", "activeTab", "storage", "tabs"],
   "host_permissions": ["<all_urls>"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "src/background/background.ts"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"],
+      "js": ["src/content-script/content.ts"],
       "run_at": "document_idle",
       "all_frames": false
     }

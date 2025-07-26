@@ -80,7 +80,7 @@ function EventList({ grouped }: EventListProps) {
             {/* 페이지별 이벤트 리스트 */}
             <div
               className={`transition-all duration-200 overflow-hidden ${
-                openPageKeys.has(pageKey) ? 'max-h-[800px]' : 'max-h-0'
+                openPageKeys.has(pageKey) ? 'max-h-auto' : 'max-h-0'
               }`}
             >
               {openPageKeys.has(pageKey) && (
@@ -151,7 +151,6 @@ function EventList({ grouped }: EventListProps) {
                                         {event["gtm.uniqueEventId"]}
                                       </>
                                     )} */}
-                                    <p>aa</p>
                                   </>
                                 )}
                                 {isGtagCommand(event) && (

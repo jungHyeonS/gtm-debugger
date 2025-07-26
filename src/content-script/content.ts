@@ -19,7 +19,6 @@
 window.addEventListener("message", (event) => {
   if (event.source !== window) return;
   if (event.data?.source === "my-extension-dataLayer") {
-    console.log("Data Layer event received:", event.data.data);
     chrome.runtime.sendMessage({
       type: "DATA_LAYER_EVENT",
       payload: event.data.data,

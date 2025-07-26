@@ -56,12 +56,8 @@ export default function App() {
                   url: '*',
                 },
                 (res) => {
-                  if (res?.success) {
-                    setGrouped({});
-                    console.log('All data layer events reset.');
-                  } else {
-                    console.error('Failed to reset data layer events.');
-                  }
+                  setGrouped({});
+                  console.log('reset',res);
                 }
               );
             }}
